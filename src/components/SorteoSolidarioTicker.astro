@@ -1,0 +1,323 @@
+---
+/**
+ * SorteoSolidarioTicker.astro — v2
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Franja horizontal entre Navbar y Hero.
+ * v2: paleta editorial negro/blanco/rojo inspirada en la gráfica del evento.
+ *
+ * ⚙️  URL DEL SORTEO — editar aquí para cambiar el destino
+ *   Producción : "https://sorteo.fundacionnomeolvides.cl"
+ *   Vercel     : "https://patagonia-nmo-sorteo.vercel.app"
+ *   Local dev  : "http://localhost:3000"
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+const SORTEO_URL = "https://sorteo.fundacionnomeolvides.cl";
+
+/*
+ * Cada ítem tiene una parte principal (blanca) y, opcionalmente, un segmento
+ * destacado en rojo. El ticker los alterna para crear ritmo visual sin
+ * usar imágenes ni assets de terceros.
+ */
+const TICKER_ITEMS = [
+  { main: "BTS en Chile", accent: "· Sorteo solidario por entradas" },
+  { main: "Dona desde $2.000 CLP", accent: "· y obtén tu participación" },
+  { main: "Organiza Fundación No Me Olvides", accent: "· campaña 2026" },
+  { main: "Certificado digital verificable", accent: "· con QR único" },
+  { main: "BTS en Chile", accent: "· Sorteo solidario por entradas" },
+  { main: "Dona desde $2.000 CLP", accent: "· y obtén tu participación" },
+  { main: "Organiza Fundación No Me Olvides", accent: "· campaña 2026" },
+  { main: "Certificado digital verificable", accent: "· con QR único" },
+];
+---
+
+<div class="ticker-wrapper">
+  <a
+    href={SORTEO_URL}
+    class="ticker-link"
+    aria-label="Sorteo solidario BTS en Chile — Dona y participa con Fundación No Me Olvides"
+  >
+    <!-- Badge izquierdo: etiqueta roja sólida -->
+    <div class="ticker-badge" aria-hidden="true">
+      <span class="badge-dot"></span>
+      <span class="badge-text">Sorteo solidario</span>
+    </div>
+
+    <!-- Separador vertical -->
+    <div class="ticker-sep-left" aria-hidden="true"></div>
+
+    <!-- Track animado -->
+    <div class="ticker-track-container" aria-hidden="true">
+      <div class="ticker-track">
+        {TICKER_ITEMS.map((item) => (
+          <span class="ticker-item">
+            <span class="item-main">{item.main}</span>
+            <span class="item-accent">{item.accent}</span>
+            <span class="item-divider" aria-hidden="true">✦</span>
+          </span>
+        ))}
+      </div>
+    </div>
+
+    <!-- Separador vertical -->
+    <div class="ticker-sep-right" aria-hidden="true"></div>
+
+    <!-- CTA derecho -->
+    <div class="ticker-cta" aria-hidden="true">
+      <span class="cta-text">Participar</span>
+      <svg
+        class="cta-arrow"
+        width="13"
+        height="13"
+        viewBox="0 0 13 13"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M1 6.5h11M6.5 1l5.5 5.5-5.5 5.5"
+          stroke="currentColor"
+          stroke-width="1.7"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </div>
+  </a>
+</div>
+
+<style>
+  /* ── Tokens de color ────────────────────────────────────────────────────── */
+  .ticker-wrapper {
+    --t-bg:          #0f0f0f;          /* grafito casi negro                 */
+    --t-bg-edge:     #1a1a1a;          /* bordes ligeramente más claros       */
+    --t-red:         #D0021B;          /* rojo intenso / editorial            */
+    --t-red-hover:   #E8001F;
+    --t-white:       #FFFFFF;
+    --t-white-dim:   rgba(255,255,255,0.72);
+    --t-sep:         rgba(255,255,255,0.10);
+    --t-height:      66px;             /* 50% más alto que v1 (44px → 66px)  */
+    --t-speed:       42s;
+
+    position: relative;
+    z-index: 40;
+    margin-top: 64px;   /* compensa navbar fixed h-16 mobile  */
+    width: 100%;
+    overflow: hidden;
+  }
+
+  @media (min-width: 1024px) {
+    .ticker-wrapper { margin-top: 80px; } /* navbar h-20 desktop */
+  }
+
+  /* ── Contenedor / enlace ────────────────────────────────────────────────── */
+  .ticker-link {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: var(--t-height);
+    background-color: var(--t-bg);
+    /* Línea roja en la parte inferior — marca de acento editorial */
+    box-shadow: inset 0 -2px 0 0 var(--t-red);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    overflow: hidden;
+  }
+
+  .ticker-link:hover {
+    background-color: #161616;
+  }
+
+  .ticker-link:focus-visible {
+    outline: 2px solid var(--t-red);
+    outline-offset: -2px;
+  }
+
+  /* ── Badge ──────────────────────────────────────────────────────────────── */
+  .ticker-badge {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 18px 0 20px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 500px) {
+    .ticker-badge { display: none; }
+  }
+
+  /* Punto rojo pulsante */
+  .badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--t-red);
+    animation: pulse-dot 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pulse-dot {
+    0%   { box-shadow: 0 0 0 0   rgba(208, 2, 27, 0.7); }
+    55%  { box-shadow: 0 0 0 6px rgba(208, 2, 27, 0);   }
+    100% { box-shadow: 0 0 0 0   rgba(208, 2, 27, 0);   }
+  }
+
+  .badge-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--t-red);
+  }
+
+  /* ── Separadores verticales ─────────────────────────────────────────────── */
+  .ticker-sep-left,
+  .ticker-sep-right {
+    width: 1px;
+    height: 28px;
+    background: var(--t-sep);
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 500px) {
+    .ticker-sep-left { display: none; }
+  }
+  @media (max-width: 400px) {
+    .ticker-sep-right { display: none; }
+  }
+
+  /* ── Track animado ──────────────────────────────────────────────────────── */
+  .ticker-track-container {
+    flex: 1;
+    overflow: hidden;
+    /* Fundidos suaves en los bordes */
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%, black 5%, black 95%, transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%, black 5%, black 95%, transparent 100%
+    );
+  }
+
+  .ticker-track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    animation: ticker-scroll var(--t-speed) linear infinite;
+  }
+
+  /* Pausa en hover/focus — accesibilidad */
+  .ticker-link:hover .ticker-track,
+  .ticker-link:focus-visible .ticker-track {
+    animation-play-state: paused;
+  }
+
+  /* prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .ticker-track {
+      animation: none;
+      width: 100%;
+      justify-content: center;
+    }
+    .ticker-item + .ticker-item {
+      display: none;
+    }
+    /* En reduced motion mostrar el primer ítem sin divider */
+    .item-divider { display: none; }
+  }
+
+  @keyframes ticker-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── Ítem del ticker ────────────────────────────────────────────────────── */
+  .ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    white-space: nowrap;
+    padding: 0 0;
+  }
+
+  /* Texto principal — blanco, peso medio, presencia tipográfica */
+  .item-main {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--t-white);
+    letter-spacing: 0.01em;
+    padding: 0 6px 0 32px;
+  }
+
+  /* Acento secundario — blanco apagado */
+  .item-accent {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--t-white-dim);
+    letter-spacing: 0.005em;
+    padding-right: 6px;
+  }
+
+  /* Divisor entre ítems — rojo, crea ritmo visual */
+  .item-divider {
+    font-size: 11px;
+    color: var(--t-red);
+    padding: 0 22px;
+    opacity: 0.85;
+  }
+
+  @media (max-width: 640px) {
+    .item-main   { font-size: 13px; padding-left: 22px; }
+    .item-accent { font-size: 12px; }
+    .item-divider { padding: 0 16px; }
+  }
+
+  /* ── CTA derecho ────────────────────────────────────────────────────────── */
+  .ticker-cta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 20px 0 18px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 400px) {
+    .ticker-cta { display: none; }
+  }
+
+  .cta-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--t-white);
+    /* Underline animado en hover */
+    text-decoration: none;
+    background-image: linear-gradient(var(--t-red), var(--t-red));
+    background-repeat: no-repeat;
+    background-size: 0% 1.5px;
+    background-position: 0 100%;
+    transition: background-size 0.25s ease, color 0.2s ease;
+  }
+
+  .ticker-link:hover .cta-text {
+    background-size: 100% 1.5px;
+    color: var(--t-white);
+  }
+
+  .cta-arrow {
+    color: var(--t-red);
+    transition: transform 0.2s ease;
+  }
+
+  .ticker-link:hover .cta-arrow {
+    transform: translateX(3px);
+  }
+</style>
